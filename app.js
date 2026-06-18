@@ -35,13 +35,14 @@ installBtn?.addEventListener("click", async () => {
 });
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js");
 
-$$(".tabs button").forEach(btn => {
+$$(".bottom-nav button").forEach(btn => {
   btn.addEventListener("click", () => {
-    $$(".tabs button").forEach(b => b.classList.remove("active"));
-    $$(".tab").forEach(t => t.classList.remove("active"));
+    $$(".bottom-nav button").forEach(b => b.classList.remove("active"));
+    $$(".screen").forEach(t => t.classList.remove("active"));
     btn.classList.add("active");
     $("#" + btn.dataset.tab).classList.add("active");
-    if (btn.dataset.tab === "body") drawChart();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (btn.dataset.tab === "body") setTimeout(drawChart, 80);
   });
 });
 
@@ -83,6 +84,12 @@ function getRank(xp) {
   return "Rookie";
 }
 
+function latestWeight() {
+  const s = load();
+  if (!s.body.length) return null;
+  return Number(s.body[s.body.length - 1].weight);
+}
+
 function coachDecision() {
   const energy = Number($("#energy").value);
   const sleep = Number($("#sleep").value || 0);
@@ -90,7 +97,6 @@ function coachDecision() {
   const time = Number($("#time").value);
   const goal = $("#goal").value;
   const pain = getPain();
-  const state = load();
   const weight = latestWeight() || 57;
   const proteinTarget = Math.round(weight * 1.8);
 
@@ -130,8 +136,20 @@ function coachDecision() {
   return { tone: lines.join("\n"), workout, readiness };
 }
 
+function updateHero(readiness) {
+  const pct = readiness * 10;
+  $("#readinessScore").innerText = `${readiness}/10`;
+  $("#ringValue").innerText = `${pct}%`;
+  $(".ring").style.background = `radial-gradient(circle at center, #0b1224 58%, transparent 60%), conic-gradient(var(--accent) ${pct}%, rgba(255,255,255,.12) 0)`;
+  $("#energyMini").innerText = `${$("#energy").value}/10`;
+  $("#sleepMini").innerText = `${$("#sleep").value || 0}h`;
+  $("#proteinMini").innerText = `${$("#proteinToday").value || 0}g`;
+  $("#heroCoach").innerText = readiness <= 4 ? "Recovery first. Do the minimum, keep the streak." : readiness <= 7 ? "Solid day. Focus on clean reps." : "Strong day. Push performance, but stay smart.";
+}
+
 function renderWorkout() {
-  const { tone, workout } = coachDecision();
+  const { tone, workout, readiness } = coachDecision();
+  updateHero(readiness);
   $("#coachText").innerText = tone;
   $("#workoutList").innerHTML = workout.map(e => `
     <div class="exercise">
@@ -139,20 +157,6 @@ function renderWorkout() {
       <span>${e[1]} · ${e[2]}</span>
     </div>
   `).join("");
-}
-
-function latestWeight() {
-  const s = load();
-  if (!s.body.length) return null;
-  return Number(s.body[s.body.length - 1].weight);
-}
-
-function completeQuest(name) {
-  const s = load();
-  const d = todayKey();
-  if (!s.quests[d]) s.quests[d] = {};
-  s.quests[d][name] = true;
-  save(s);
 }
 
 function saveWorkout() {
@@ -203,51 +207,59 @@ function renderBodyHistory() {
 }
 
 function drawChart() {
-  const s = load();
   const canvas = $("#progressChart");
   if (!canvas) return;
+  const s = load();
   const ctx = canvas.getContext("2d");
-  const w = canvas.width = canvas.offsetWidth * devicePixelRatio;
-  const h = canvas.height = 220 * devicePixelRatio;
+  const ratio = devicePixelRatio || 1;
+  const w = canvas.width = canvas.offsetWidth * ratio;
+  const h = canvas.height = 220 * ratio;
   ctx.clearRect(0, 0, w, h);
 
   const data = s.body.slice(-10);
-  ctx.strokeStyle = "rgba(255,255,255,.2)";
-  ctx.lineWidth = 1 * devicePixelRatio;
-  ctx.beginPath();
-  ctx.moveTo(20*devicePixelRatio, h - 30*devicePixelRatio);
-  ctx.lineTo(w - 10*devicePixelRatio, h - 30*devicePixelRatio);
-  ctx.stroke();
+  ctx.strokeStyle = "rgba(255,255,255,.16)";
+  ctx.lineWidth = 1 * ratio;
+  for (let i = 0; i < 4; i++) {
+    const y = 35*ratio + i*((h-70*ratio)/3);
+    ctx.beginPath();
+    ctx.moveTo(20*ratio, y);
+    ctx.lineTo(w - 20*ratio, y);
+    ctx.stroke();
+  }
 
   if (data.length < 2) {
-    ctx.fillStyle = "#a6b0c3";
-    ctx.font = `${14*devicePixelRatio}px sans-serif`;
-    ctx.fillText("บันทึกอย่างน้อย 2 ครั้ง เพื่อดูกราฟ", 24*devicePixelRatio, 80*devicePixelRatio);
+    ctx.fillStyle = "#9aa6bd";
+    ctx.font = `${14*ratio}px sans-serif`;
+    ctx.fillText("บันทึกอย่างน้อย 2 ครั้ง เพื่อดูกราฟ", 24*ratio, 88*ratio);
     return;
   }
 
   const weights = data.map(d => d.weight);
   const min = Math.min(...weights) - 1;
   const max = Math.max(...weights) + 1;
-  const xStep = (w - 60*devicePixelRatio) / (data.length - 1);
+  const xStep = (w - 60*ratio) / (data.length - 1);
 
-  ctx.strokeStyle = "#f5c56b";
-  ctx.lineWidth = 3 * devicePixelRatio;
+  const grad = ctx.createLinearGradient(0, 0, w, 0);
+  grad.addColorStop(0, "#7dd3fc");
+  grad.addColorStop(1, "#f5c56b");
+  ctx.strokeStyle = grad;
+  ctx.lineWidth = 4 * ratio;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
   ctx.beginPath();
   data.forEach((d, i) => {
-    const x = 30*devicePixelRatio + i*xStep;
-    const y = h - 35*devicePixelRatio - ((d.weight - min) / (max - min)) * (h - 70*devicePixelRatio);
+    const x = 30*ratio + i*xStep;
+    const y = h - 35*ratio - ((d.weight - min) / (max - min)) * (h - 70*ratio);
     if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
   });
   ctx.stroke();
 
   ctx.fillStyle = "#f8fafc";
-  ctx.font = `${12*devicePixelRatio}px sans-serif`;
   data.forEach((d, i) => {
-    const x = 30*devicePixelRatio + i*xStep;
-    const y = h - 35*devicePixelRatio - ((d.weight - min) / (max - min)) * (h - 70*devicePixelRatio);
+    const x = 30*ratio + i*xStep;
+    const y = h - 35*ratio - ((d.weight - min) / (max - min)) * (h - 70*ratio);
     ctx.beginPath();
-    ctx.arc(x, y, 4*devicePixelRatio, 0, Math.PI*2);
+    ctx.arc(x, y, 4.5*ratio, 0, Math.PI*2);
     ctx.fill();
   });
 }
@@ -261,19 +273,19 @@ function mealPlan() {
   const proteinMeal = Math.round(protein / meals);
 
   const examples = [
-    ["มื้อ 1", `ไข่ 2 ฟอง + กรีกโยเกิร์ต/Skyr + ผลไม้`, `${proteinMeal}g protein target`],
-    ["มื้อ 2", `ข้าว + ไก่/เต้าหู้ + ผัก`, `${proteinMeal}g protein target`],
-    ["มื้อ 3", `ก๋วยเตี๋ยว/ข้าว + เนื้อสัตว์ไม่ติดมัน`, `${proteinMeal}g protein target`],
-    ["มื้อ 4", `โปรตีนเชคหรือทูน่า/ไข่/Skyr`, `${proteinMeal}g protein target`],
-    ["มื้อ 5", `ของว่างโปรตีนสูง`, `${proteinMeal}g protein target`],
+    ["Meal 1", `ไข่ 2 ฟอง + Greek yogurt/Skyr + ผลไม้`, `${proteinMeal}g protein target`],
+    ["Meal 2", `ข้าว + ไก่/เต้าหู้ + ผัก`, `${proteinMeal}g protein target`],
+    ["Meal 3", `ก๋วยเตี๋ยว/ข้าว + เนื้อสัตว์ไม่ติดมัน`, `${proteinMeal}g protein target`],
+    ["Meal 4", `โปรตีนเชคหรือทูน่า/ไข่/Skyr`, `${proteinMeal}g protein target`],
+    ["Meal 5", `ของว่างโปรตีนสูง`, `${proteinMeal}g protein target`],
   ].slice(0, meals);
 
   const shopping = ["ไข่", "อกไก่หรือไก่งวง", "เต้าหู้", "Skyr/Greek yogurt", "ข้าวหรือมันฝรั่ง", "ผักแช่แข็ง", "ผลไม้", "ทูน่า", "โปรตีนผงถ้ามีงบ"];
 
   $("#mealOutput").innerHTML = `
-    <div class="meal-box"><strong>เป้าหมายต่อวัน</strong><span>โปรตีนประมาณ ${protein}g · แคลอรี่ประมาณ ${calories} kcal</span></div>
+    <div class="meal-box"><strong>Daily target</strong><span>Protein ${protein}g · Calories ${calories} kcal</span></div>
     ${examples.map(m => `<div class="meal-box"><strong>${m[0]}</strong><span>${m[1]}<br>${m[2]}</span></div>`).join("")}
-    <div class="meal-box"><strong>Shopping List</strong><span>${shopping.map(x => "• " + x).join("<br>")}</span></div>
+    <div class="meal-box"><strong>Shopping list</strong><span>${shopping.map(x => "• " + x).join("<br>")}</span></div>
   `;
 
   const s = load();
@@ -317,8 +329,8 @@ function analyzePhotos() {
     msg.push("ใส่รูป Before และ After/Current ก่อน ระบบถึงจะเปรียบเทียบได้.");
   } else {
     msg.push("รูปถูกบันทึกแล้ว. เวอร์ชันนี้ยังไม่ใช้ AI Vision จริง แต่ใช้เป็นฐานสำหรับ Before/After Tracking.");
-    msg.push("คำแนะนำ: ถ่ายรูปทุก 2 สัปดาห์ แสงเดียวกัน มุมเดียวกัน ระยะเดียวกัน ตอนเช้าหลังเข้าห้องน้ำ จะเห็น Progress ชัดกว่า.");
-    msg.push("AI Vision จริงจะต้องต่อ API เพิ่มภายหลัง เพื่อวิเคราะห์ไขมัน กล้ามเนื้อ และจุดที่ควรพัฒนา.");
+    msg.push("คำแนะนำ: ถ่ายรูปทุก 2 สัปดาห์ แสงเดียวกัน มุมเดียวกัน ระยะเดียวกัน ตอนเช้าหลังเข้าห้องน้ำ.");
+    msg.push("AI Vision จริงต้องต่อ Backend/API เพิ่มภายหลัง เพื่อวิเคราะห์ไขมัน กล้ามเนื้อ และจุดที่ควรพัฒนา.");
     s.stats.xp += 50;
     if (!s.quests[todayKey()]) s.quests[todayKey()] = {};
     s.quests[todayKey()].photo = true;
@@ -359,8 +371,10 @@ function renderGame() {
   ).join("");
 }
 
-$("#energy").addEventListener("input", e => $("#energyVal").innerText = `${e.target.value}/10`);
-$$("input[data-muscle]").forEach(i => i.addEventListener("input", e => e.target.nextElementSibling.innerText = e.target.value));
+$("#energy").addEventListener("input", e => { $("#energyVal").innerText = `${e.target.value}/10`; renderWorkout(); });
+$("#sleep").addEventListener("input", renderWorkout);
+$("#proteinToday").addEventListener("input", renderWorkout);
+$$("input[data-muscle]").forEach(i => i.addEventListener("input", e => { e.target.nextElementSibling.innerText = e.target.value; renderWorkout(); }));
 $("#generateBtn").addEventListener("click", renderWorkout);
 $("#saveWorkoutBtn").addEventListener("click", saveWorkout);
 $("#saveBodyBtn").addEventListener("click", saveBodyCheckin);

@@ -1,4 +1,4 @@
-const CACHE = "home-ai-coach-pro-v2";
+const CACHE = "home-ai-coach-premium-ui-v1";
 const ASSETS = ["./", "./index.html", "./style.css", "./app.js", "./manifest.json", "./icon.svg"];
 
 self.addEventListener("install", e => {

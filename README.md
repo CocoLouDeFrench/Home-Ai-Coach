@@ -1,20 +1,10 @@
-# Home AI Coach Pro
+# Home AI Coach Pro - Premium UI
 
-V2-V6 upgrade
+Fitness app style PWA with:
+- Premium mobile layout
+- Bottom navigation
+- Readiness hero
+- Glassmorphism cards
+- Workout, body tracking, meal plan, photos, gamification
 
-## Included
-- V2: Body weight, waist tracking, progress chart
-- V3: Local AI Coach logic with sleep, protein, soreness and readiness score
-- V4: Protein, calories, meal plan and shopping list
-- V5: Before/After photo storage and progress guidance
-- V6: XP, rank, achievements and daily quests
-
-## Important
-This is still a static offline-first PWA. Do not put OpenAI API keys into app.js.
-
-For real ChatGPT Coach or AI photo analysis, add a backend route later through:
-- Vercel Serverless Function
-- Supabase Edge Function
-- Cloudflare Worker
-
-The frontend is already structured so a backend can be added later.
+Upload these files over the existing GitHub repository and Vercel will redeploy automatically.
