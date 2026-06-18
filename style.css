@@ -1,11 +1,11 @@
 :root {
   --bg: #0b1020;
   --card: #121a2f;
+  --card2: #0f172a;
   --text: #f8fafc;
   --muted: #a6b0c3;
   --accent: #f5c56b;
-  --danger: #fb7185;
-  --ok: #86efac;
+  --line: rgba(255,255,255,.09);
 }
 * { box-sizing: border-box; }
 body {
@@ -20,15 +20,42 @@ header {
   justify-content: space-between;
   gap: 12px;
   align-items: start;
+  max-width: 920px;
+  margin: auto;
 }
-h1 { margin: 0; font-size: 34px; }
+h1 { margin: 0; font-size: 34px; line-height: 1.05; }
 h2 { margin-top: 0; }
-.eyebrow { color: var(--accent); letter-spacing: .12em; font-size: 12px; margin: 0 0 6px; }
-.subtitle { color: var(--muted); margin: 8px 0 0; }
-main { padding: 12px 18px 40px; max-width: 850px; margin: auto; }
+.eyebrow { color: var(--accent); letter-spacing: .14em; font-size: 12px; margin: 0 0 8px; }
+.subtitle, .muted { color: var(--muted); margin: 8px 0 0; line-height: 1.45; }
+main { padding: 8px 18px 46px; max-width: 920px; margin: auto; }
+.tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 8px 18px 10px;
+  max-width: 920px;
+  margin: auto;
+  position: sticky;
+  top: 0;
+  background: rgba(11,16,32,.86);
+  backdrop-filter: blur(12px);
+  z-index: 3;
+}
+.tabs button {
+  min-width: fit-content;
+  margin: 0;
+  background: rgba(255,255,255,.08);
+  color: var(--text);
+}
+.tabs button.active {
+  background: var(--accent);
+  color: #141414;
+}
+.tab { display: none; }
+.tab.active { display: block; }
 .card {
   background: rgba(18, 26, 47, .92);
-  border: 1px solid rgba(255,255,255,.08);
+  border: 1px solid var(--line);
   border-radius: 22px;
   padding: 18px;
   margin: 14px 0;
@@ -41,12 +68,14 @@ main { padding: 12px 18px 40px; max-width: 850px; margin: auto; }
   gap: 14px;
 }
 label { display: grid; gap: 8px; color: var(--muted); }
-select, button {
+select, button, input[type=number], input[type=text], input[type=file] {
   border: 0;
   border-radius: 14px;
   padding: 13px 14px;
   font: inherit;
+  width: 100%;
 }
+input, select { background: #e5e7eb; color: #111827; }
 button {
   background: var(--accent);
   color: #141414;
@@ -59,18 +88,20 @@ input[type=range] { width: 100%; }
 .coach #coachText {
   font-size: 18px;
   line-height: 1.55;
+  white-space: pre-line;
 }
-.exercise {
+.exercise, .quest, .achievement, .meal-box {
   padding: 14px;
   background: rgba(255,255,255,.06);
   border-radius: 16px;
   margin: 10px 0;
+  border: 1px solid rgba(255,255,255,.05);
 }
-.exercise strong { display:block; font-size: 18px; }
-.exercise span { color: var(--muted); }
+.exercise strong, .meal-box strong { display:block; font-size: 18px; margin-bottom: 4px; }
+.exercise span, .history, .meal-box span { color: var(--muted); line-height: 1.55; }
 .stats {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
 }
 .stats div {
@@ -79,6 +110,30 @@ input[type=range] { width: 100%; }
   padding: 14px;
   text-align: center;
 }
-.stats strong { font-size: 28px; display: block; }
+.stats strong { font-size: 26px; display: block; }
 .stats span { color: var(--muted); font-size: 13px; }
-#history { color: var(--muted); margin-top: 14px; line-height: 1.5; }
+canvas {
+  width: 100%;
+  background: rgba(255,255,255,.04);
+  border-radius: 16px;
+  margin-bottom: 12px;
+}
+.photo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 14px;
+}
+.photo-grid img {
+  display: none;
+  width: 100%;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+  border-radius: 16px;
+  background: rgba(255,255,255,.06);
+}
+.badge-ok { color: #86efac; }
+.badge-lock { color: var(--muted); }
+@media (min-width: 720px) {
+  .stats { grid-template-columns: repeat(4, 1fr); }
+}

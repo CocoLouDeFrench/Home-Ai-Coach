@@ -1,23 +1,20 @@
-# Home AI Coach PWA
+# Home AI Coach Pro
 
-MVP สำหรับแอปออกกำลังกายที่บ้านพร้อม AI Coaching แบบ local rule-based
+V2-V6 upgrade
 
-## วิธีเปิดใช้งาน
-1. แตกไฟล์ zip
-2. เปิด `index.html` ใน browser
-3. ถ้าจะให้ติดตั้งเป็น PWA จริง ควร deploy บน HTTPS เช่น Netlify, Vercel, GitHub Pages หรือ Cloudflare Pages
+## Included
+- V2: Body weight, waist tracking, progress chart
+- V3: Local AI Coach logic with sleep, protein, soreness and readiness score
+- V4: Protein, calories, meal plan and shopping list
+- V5: Before/After photo storage and progress guidance
+- V6: XP, rank, achievements and daily quests
 
-## ฟีเจอร์
-- AI Coach จัด workout ตามพลังงาน เวลา เป้าหมาย และความปวด
-- Recovery-based training: ถ้ากล้ามเนื้อปวดมาก จะหลีกเลี่ยงอัตโนมัติ
-- Offline mode ด้วย service worker
-- บันทึก sessions, streak, XP ใน localStorage
-- ใช้ได้บนมือถือ
+## Important
+This is still a static offline-first PWA. Do not put OpenAI API keys into app.js.
 
-## Next Step ที่ควรเพิ่ม
-- Login
-- รูปก่อน/หลัง
-- ฐานข้อมูล Supabase/Firebase
-- AI API จริง เช่น OpenAI API สำหรับ coaching text
-- Exercise library พร้อมภาพหรือวิดีโอ
-- Nutrition tracker
+For real ChatGPT Coach or AI photo analysis, add a backend route later through:
+- Vercel Serverless Function
+- Supabase Edge Function
+- Cloudflare Worker
+
+The frontend is already structured so a backend can be added later.

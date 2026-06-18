@@ -3,77 +3,184 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Home AI Coach</title>
+  <title>Home AI Coach Pro</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="style.css" />
-  <meta name="theme-color" content="#111827" />
+  <meta name="theme-color" content="#0b1020" />
 </head>
 <body>
   <header>
     <div>
       <p class="eyebrow">PRIVATE TRAINER MODE</p>
-      <h1>Home AI Coach</h1>
-      <p class="subtitle">เทรนเนอร์ส่วนตัวสำหรับสร้างกล้ามที่บ้าน แบบประหยัดแต่ดูแพง</p>
+      <h1>Home AI Coach Pro</h1>
+      <p class="subtitle">AI Trainer ส่วนตัว: Workout · Body Tracking · Meal Plan · Progress · XP</p>
     </div>
-    <button id="installBtn" hidden>ติดตั้งแอป</button>
+    <button id="installBtn" hidden>ติดตั้ง</button>
   </header>
 
+  <nav class="tabs">
+    <button data-tab="coach" class="active">Coach</button>
+    <button data-tab="body">Body</button>
+    <button data-tab="meal">Meal</button>
+    <button data-tab="photos">Photos</button>
+    <button data-tab="game">Game</button>
+  </nav>
+
   <main>
-    <section class="card">
-      <h2>วันนี้ร่างกายเป็นยังไง?</h2>
-      <div class="grid">
-        <label>พลังงานวันนี้
-          <input id="energy" type="range" min="1" max="10" value="7" />
-          <span id="energyVal">7/10</span>
-        </label>
-        <label>เวลาที่มี
-          <select id="time">
-            <option value="20">20 นาที</option>
-            <option value="30" selected>30 นาที</option>
-            <option value="45">45 นาที</option>
-          </select>
-        </label>
-        <label>เป้าหมาย
-          <select id="goal">
-            <option value="muscle" selected>สร้างกล้าม</option>
-            <option value="fatloss">ลดไขมัน</option>
-            <option value="restart">กลับมาเริ่มใหม่</option>
-          </select>
-        </label>
-      </div>
+    <section id="coach" class="tab active">
+      <section class="card">
+        <h2>วันนี้ร่างกายเป็นยังไง?</h2>
+        <div class="grid">
+          <label>พลังงานวันนี้
+            <input id="energy" type="range" min="1" max="10" value="7" />
+            <span id="energyVal">7/10</span>
+          </label>
+          <label>นอนกี่ชั่วโมง
+            <input id="sleep" type="number" min="0" max="14" step="0.5" value="7" />
+          </label>
+          <label>โปรตีนวันนี้
+            <input id="proteinToday" type="number" min="0" value="80" />
+          </label>
+          <label>เวลาที่มี
+            <select id="time">
+              <option value="20">20 นาที</option>
+              <option value="30" selected>30 นาที</option>
+              <option value="45">45 นาที</option>
+            </select>
+          </label>
+          <label>เป้าหมาย
+            <select id="goal">
+              <option value="muscle" selected>สร้างกล้าม</option>
+              <option value="fatloss">ลดไขมัน</option>
+              <option value="restart">กลับมาเริ่มใหม่</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>คะแนนความปวด</h2>
+        <div class="pain-grid">
+          <label>ขา <input data-muscle="legs" type="range" min="0" max="10" value="2"><span>2</span></label>
+          <label>อก <input data-muscle="chest" type="range" min="0" max="10" value="2"><span>2</span></label>
+          <label>หลัง <input data-muscle="back" type="range" min="0" max="10" value="2"><span>2</span></label>
+          <label>ไหล่ <input data-muscle="shoulders" type="range" min="0" max="10" value="2"><span>2</span></label>
+          <label>แกนกลาง <input data-muscle="core" type="range" min="0" max="10" value="2"><span>2</span></label>
+        </div>
+        <button id="generateBtn">ให้ AI Coach จัดโปรแกรมวันนี้</button>
+      </section>
+
+      <section class="coach card premium">
+        <h2>AI Coach</h2>
+        <div id="coachText">กำลังโหลด...</div>
+      </section>
+
+      <section class="card">
+        <h2>Workout วันนี้</h2>
+        <div id="workoutList" class="workout"></div>
+        <button id="saveWorkoutBtn">บันทึกว่าเล่นเสร็จแล้ว</button>
+      </section>
     </section>
 
-    <section class="card">
-      <h2>คะแนนความปวด</h2>
-      <div class="pain-grid">
-        <label>ขา <input data-muscle="legs" type="range" min="0" max="10" value="2"><span>2</span></label>
-        <label>อก <input data-muscle="chest" type="range" min="0" max="10" value="2"><span>2</span></label>
-        <label>หลัง <input data-muscle="back" type="range" min="0" max="10" value="2"><span>2</span></label>
-        <label>ไหล่ <input data-muscle="shoulders" type="range" min="0" max="10" value="2"><span>2</span></label>
-        <label>แกนกลาง <input data-muscle="core" type="range" min="0" max="10" value="2"><span>2</span></label>
-      </div>
-      <button id="generateBtn">ให้ AI Coach จัดโปรแกรมวันนี้</button>
+    <section id="body" class="tab">
+      <section class="card">
+        <h2>V2 Body Tracking</h2>
+        <div class="grid">
+          <label>น้ำหนักตัว kg
+            <input id="weight" type="number" step="0.1" placeholder="เช่น 57.5" />
+          </label>
+          <label>รอบเอว cm
+            <input id="waist" type="number" step="0.1" placeholder="เช่น 70" />
+          </label>
+          <label>หมายเหตุ
+            <input id="bodyNote" type="text" placeholder="เช่น ท้องอืด / นอนน้อย / แข็งแรง" />
+          </label>
+        </div>
+        <button id="saveBodyBtn">บันทึก Body Check-in</button>
+      </section>
+      <section class="card">
+        <h2>กราฟพัฒนาการ</h2>
+        <canvas id="progressChart" height="220"></canvas>
+        <div id="bodyHistory" class="history"></div>
+      </section>
     </section>
 
-    <section class="coach card premium">
-      <h2>AI Coach พูดตรงๆ</h2>
-      <div id="coachText">กรอกสภาพร่างกาย แล้วกดปุ่มด้านบน</div>
+    <section id="meal" class="tab">
+      <section class="card">
+        <h2>V4 Meal Plan</h2>
+        <div class="grid">
+          <label>น้ำหนักตัว kg
+            <input id="mealWeight" type="number" step="0.1" value="57" />
+          </label>
+          <label>เป้าหมาย
+            <select id="mealGoal">
+              <option value="muscle" selected>สร้างกล้าม</option>
+              <option value="fatloss">ลดไขมัน</option>
+              <option value="maintain">รักษาหุ่น</option>
+            </select>
+          </label>
+          <label>มื้อต่อวัน
+            <select id="mealsPerDay">
+              <option value="3">3 มื้อ</option>
+              <option value="4" selected>4 มื้อ</option>
+              <option value="5">5 มื้อ</option>
+            </select>
+          </label>
+        </div>
+        <button id="mealBtn">สร้าง Meal Plan</button>
+      </section>
+      <section class="card">
+        <h2>ผลลัพธ์อาหาร</h2>
+        <div id="mealOutput"></div>
+      </section>
     </section>
 
-    <section class="card">
-      <h2>Workout วันนี้</h2>
-      <div id="workoutList" class="workout"></div>
-      <button id="saveBtn">บันทึกว่าเล่นเสร็จแล้ว</button>
+    <section id="photos" class="tab">
+      <section class="card">
+        <h2>V5 Before / After</h2>
+        <p class="muted">เก็บรูปไว้ในเครื่องของคุณเท่านั้น ไม่อัปโหลดขึ้น Server</p>
+        <div class="grid">
+          <label>Before
+            <input id="beforePhoto" type="file" accept="image/*" />
+          </label>
+          <label>After / Current
+            <input id="afterPhoto" type="file" accept="image/*" />
+          </label>
+        </div>
+        <div class="photo-grid">
+          <img id="beforePreview" alt="Before preview" />
+          <img id="afterPreview" alt="After preview" />
+        </div>
+        <button id="photoAnalysisBtn">วิเคราะห์ Progress แบบเบื้องต้น</button>
+      </section>
+      <section class="card">
+        <h2>Photo Coach</h2>
+        <div id="photoAnalysis">ยังไม่มีข้อมูลรูป</div>
+      </section>
     </section>
 
-    <section class="card">
-      <h2>Progress</h2>
-      <div class="stats">
-        <div><strong id="streak">0</strong><span>day streak</span></div>
-        <div><strong id="sessions">0</strong><span>sessions</span></div>
-        <div><strong id="xp">0</strong><span>XP</span></div>
-      </div>
-      <div id="history"></div>
+    <section id="game" class="tab">
+      <section class="card">
+        <h2>V6 Gamification</h2>
+        <div class="stats">
+          <div><strong id="streak">0</strong><span>day streak</span></div>
+          <div><strong id="sessions">0</strong><span>sessions</span></div>
+          <div><strong id="xp">0</strong><span>XP</span></div>
+          <div><strong id="rank">Rookie</strong><span>rank</span></div>
+        </div>
+      </section>
+      <section class="card">
+        <h2>Daily Quests</h2>
+        <div id="quests"></div>
+      </section>
+      <section class="card">
+        <h2>Achievements</h2>
+        <div id="achievements"></div>
+      </section>
+      <section class="card">
+        <h2>ประวัติ</h2>
+        <div id="history" class="history"></div>
+      </section>
     </section>
   </main>
 

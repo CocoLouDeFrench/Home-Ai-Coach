@@ -1,10 +1,10 @@
 {
-  "name": "Home AI Coach",
-  "short_name": "AI Coach",
+  "name": "Home AI Coach Pro",
+  "short_name": "AI Coach Pro",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0b1020",
-  "theme_color": "#111827",
+  "theme_color": "#0b1020",
   "icons": [
     {
       "src": "icon.svg",
