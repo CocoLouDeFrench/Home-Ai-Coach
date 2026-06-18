@@ -1,5 +1,15 @@
-const CACHE = "home-ai-coach-premium-ui-v1";
-const ASSETS = ["./", "./index.html", "./style.css", "./app.js", "./manifest.json", "./icon.svg"];
+const CACHE = "iron-home-logo-v1";
+const ASSETS = [
+  "./",
+  "./index.html",
+  "./style.css",
+  "./app.js",
+  "./manifest.json",
+  "./logo.png",
+  "./icon-192.png",
+  "./icon-512.png",
+  "./apple-touch-icon.png"
+];
 
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)));

@@ -1,10 +1,11 @@
-# Home AI Coach Pro - Premium UI
+# IRON HOME PWA Logo Update
 
-Fitness app style PWA with:
-- Premium mobile layout
-- Bottom navigation
-- Readiness hero
-- Glassmorphism cards
-- Workout, body tracking, meal plan, photos, gamification
+This version adds:
+- IRON HOME app name
+- Uploaded logo as PWA icon
+- Apple touch icon for iPhone Home Screen
+- Splash screen with logo
+- Logo in app header and AI Coach card
 
-Upload these files over the existing GitHub repository and Vercel will redeploy automatically.
+Upload all files to GitHub over the old files, then commit changes.
+Vercel will redeploy automatically.
